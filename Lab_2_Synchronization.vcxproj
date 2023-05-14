@@ -128,10 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Lab_2_Synchronization.cpp" />
+    <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskQueue.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Task.h" />
     <ClInclude Include="TaskQueue.h" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
