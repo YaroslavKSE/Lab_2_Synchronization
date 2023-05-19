@@ -7,4 +7,3 @@ public:
 	float taskTime;
 	int id;
 };
-

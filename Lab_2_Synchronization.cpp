@@ -10,27 +10,22 @@ using namespace std;
 
 int main() {
 	
-	TaskQueue firstQueue;
-	TaskQueue secondQueue;
+    
+    ThreadPool threadPool;
 
-	TaskGenerator taskGenerator;
-	Task t1 = taskGenerator.GenerateTask();
-	Task t2 =  taskGenerator.GenerateTask();
-	Task t3 = taskGenerator.GenerateTask();;
+    const size_t workerCount = 4;  // Adjust the number of worker threads as needed
+    threadPool.initialize(workerCount);
 
-	firstQueue.emplace(t1);
-	firstQueue.emplace(t2);
-	firstQueue.emplace(t3);
-	float a = firstQueue.GetTotalTime();
+    TaskGenerator taskGenerator;
 
-	cout << a << endl;
-	ThreadPool pool;
-	pool.initialize(5);
-	pool.add_task(t1);
-	pool.add_task(t2);
-	pool.add_task(t3);
+    const size_t numTasks = 20;  // Adjust the number of tasks as needed
+    for (size_t i = 0; i < numTasks; i++) {
+        Task task = taskGenerator.GenerateTask();
+        threadPool.add_task(task);
+    }
 
-	
-	return 0;
+    threadPool.terminate();
+
+    return 0;
 
 }

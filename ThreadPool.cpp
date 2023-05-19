@@ -3,15 +3,21 @@
 void ThreadPool::initialize(const size_t worker_count)
 {
 	write_lock _(m_rw_lock);
-	if (m_initialized || m_terminated)
-	{
+	if (m_initialized || m_terminated) {
 		return;
 	}
-	m_workers.reserve(worker_count);
-	for (size_t id = 0; id < worker_count; id++)
-	{
+	m_workers.reserve(worker_count); 
+
+	// Create worker threads for the first queue
+	for (size_t id = 0; id < worker_count; id++) {
 		m_workers.emplace_back(&ThreadPool::routine, this);
 	}
+
+	// Create worker threads for the second queue
+	for (size_t id = worker_count / 2; id < worker_count; id++) {
+		m_workers.emplace_back(&ThreadPool::routine, this);
+	}
+
 	m_initialized = !m_workers.empty();
 
 }
@@ -46,22 +52,26 @@ void ThreadPool::routine()
 {
 	while (true)
 	{
-		bool task_accquiered = false;
+		bool task_acquired = false;
 		Task task;
 		{
 			write_lock _(m_rw_lock);
-			auto wait_condition = [this, &task_accquiered, &task]
-			{
-				task_accquiered = firstQueue.pop(task);
-				return m_terminated || task_accquiered;
+			auto wait_condition = [this, &task_acquired, &task] {
+				task_acquired = firstQueue.pop(task);
+				if (!task_acquired) {
+					task_acquired = secondQueue.pop(task);
+				}
+				return m_terminated || task_acquired;
 			};
 			m_task_waiter.wait(_, wait_condition);
 		}
-		if (m_terminated && !task_accquiered)
-		{
+		if (m_terminated && !task_acquired) {
 			return;
 		}
-		Task;
+		std::cout << "Performing the task [id=" << task.id << " time=" << task.taskTime << "]" << "\n";
+		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long>(task.taskTime * 1000)));
+		std::cout << "The task is done, waiting for next" << "\n";
+		m_task_waiter.notify_one();
 	}
 
 }
@@ -81,13 +91,23 @@ void ThreadPool::add_task(Task& task)
 {
 	{
 		read_lock _(m_rw_lock);
-		if (!working_unsafe())
-		{
+		if (!working_unsafe()) {
 			return;
 		}
 	}
 
-	firstQueue.emplace(task);
+	//if (firstQueue.GetTotalTime() <= secondQueue.GetTotalTime()) {
+	//	firstQueue.emplace(task);
+	//}
+	//else {
+	//	secondQueue.emplace(task);
+	//}
+
+
+	// Determine the queue with the shortest total execution time
+	TaskQueue& leastLoadedQueue = (firstQueue.GetTotalTime() < secondQueue.GetTotalTime()) ? firstQueue : secondQueue;
+
+	leastLoadedQueue.emplace(task);
 	m_task_waiter.notify_one();
 
 }

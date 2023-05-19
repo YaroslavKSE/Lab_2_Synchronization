@@ -32,5 +32,3 @@ private:
 	bool m_initialized = false;
 	bool m_terminated = false;
 };
-
-

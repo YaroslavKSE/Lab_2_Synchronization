@@ -11,8 +11,7 @@ class TaskGenerator
 public:
 	TaskGenerator();
 	~TaskGenerator();
-	Task GenerateTask();
+	Task GenerateTask(); 
 private:
 	static int idCounter;
 };
-

@@ -4,6 +4,7 @@ int TaskGenerator::idCounter = 0;
 
 TaskGenerator::TaskGenerator()
 {
+    
 }
 
 TaskGenerator::~TaskGenerator()
@@ -20,9 +21,9 @@ float generateRandomFloat(float min_value, float max_value) {
 
 Task TaskGenerator::GenerateTask()
 {
-	Task newTask;
-	int randomTime = generateRandomFloat(2.0, 15.0);
-	newTask.taskTime = randomTime;
-	newTask.id = idCounter++;
-	return newTask;
+    Task newTask;
+    float randomTime = generateRandomFloat(2.0, 15.0);
+    newTask.taskTime = randomTime;
+    newTask.id = idCounter++;
+    return newTask;
 }
