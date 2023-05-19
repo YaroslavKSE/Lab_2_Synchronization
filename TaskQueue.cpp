@@ -1,21 +1,25 @@
 #include "TaskQueue.h"
 
-template<typename task_type_t>
-inline bool TaskQueue<task_type_t>::empty() const
+
+TaskQueue::~TaskQueue()
+{
+}
+
+bool TaskQueue::empty() const
 {
 	read_lock _(m_rw_lock);
 	return m_tasks.empty();
 }
 
-template <typename task_type_t>
-size_t TaskQueue<task_type_t>::size() const
+
+size_t TaskQueue::size() const
 {
 	read_lock _(m_rw_lock);
 	return m_tasks.size();
 }
 
-template <typename task_type_t>
-void TaskQueue<task_type_t>::clear()
+
+void TaskQueue::clear()
 {
 	write_lock _(m_rw_lock);
 	while (!m_tasks.empty())
@@ -24,8 +28,7 @@ void TaskQueue<task_type_t>::clear()
 	}
 }
 
-template <typename task_type_t>
-bool TaskQueue<task_type_t>::pop(task_type_t& task)
+bool TaskQueue::pop(Task& task)
 {
 	write_lock _(m_rw_lock);
 	if (m_tasks.empty())
@@ -39,10 +42,10 @@ bool TaskQueue<task_type_t>::pop(task_type_t& task)
 		return true;
 	}
 }
-template <typename task_type_t>
-template <typename... arguments>
-void TaskQueue<task_type_t>::emplace(arguments&&... parameters)
+
+void TaskQueue::emplace(Task& task)
 {
 	write_lock _(m_rw_lock);
-	m_tasks.emplace(std::forward<arguments>(parameters)...);
+	m_tasks.emplace(task);
 }
+

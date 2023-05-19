@@ -2,26 +2,26 @@
 #include <queue>
 #include <thread>
 #include <shared_mutex>
+#include "Task.h"
 
 using read_write_lock = std::shared_mutex;
 using read_lock = std::shared_lock<read_write_lock>;
 using write_lock = std::unique_lock<read_write_lock>;
-template <typename task_type_t>
+
 
 class TaskQueue
 {
 private:
-	using task_queue_implementation = std::queue<task_type_t>;
+	using task_queue_implementation = std::queue<Task>;
 public:
-	inline TaskQueue() = default;
-	inline ~TaskQueue() { clear(); }
-	inline bool empty() const;
-	inline size_t size() const;
+	TaskQueue() = default;
+	~TaskQueue();
+	bool empty() const;
+	size_t size() const;
 public:
-	inline void clear();
-	inline bool pop(task_type_t& task); 
-	template <typename... arguments>
-	inline void emplace(arguments&&... parameters);
+	void clear();
+	bool pop(Task& task); 
+	void emplace(Task& task);
 public:
 	TaskQueue(TaskQueue& other) = delete;
 	TaskQueue(TaskQueue&& other) = delete;
