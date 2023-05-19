@@ -2,6 +2,7 @@
 #include <queue>
 #include <thread>
 #include <shared_mutex>
+#include <iostream>
 #include "Task.h"
 
 using read_write_lock = std::shared_mutex;
@@ -18,6 +19,7 @@ public:
 	~TaskQueue();
 	bool empty() const;
 	size_t size() const;
+	float GetTotalTime();
 public:
 	void clear();
 	bool pop(Task& task); 

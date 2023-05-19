@@ -27,7 +27,8 @@ private:
 	mutable std::condition_variable_any m_task_waiter;
 
 	std::vector<std::thread> m_workers;
-	TaskQueue m_tasks;
+	TaskQueue firstQueue;
+	TaskQueue secondQueue;
 	bool m_initialized = false;
 	bool m_terminated = false;
 };

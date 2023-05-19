@@ -49,3 +49,11 @@ void TaskQueue::emplace(Task& task)
 	m_tasks.emplace(task);
 }
 
+float TaskQueue::GetTotalTime() {
+	read_lock _(m_rw_lock);
+	float totalTime = 0;
+	for (int i = 0; i < m_tasks.size(); i++) {
+		totalTime += m_tasks.front().taskTime;
+	}
+	return totalTime;
+}

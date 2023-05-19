@@ -52,7 +52,7 @@ void ThreadPool::routine()
 			write_lock _(m_rw_lock);
 			auto wait_condition = [this, &task_accquiered, &task]
 			{
-				task_accquiered = m_tasks.pop(task);
+				task_accquiered = firstQueue.pop(task);
 				return m_terminated || task_accquiered;
 			};
 			m_task_waiter.wait(_, wait_condition);
@@ -86,7 +86,8 @@ void ThreadPool::add_task(Task& task)
 			return;
 		}
 	}
-	m_tasks.emplace(task);
+
+	firstQueue.emplace(task);
 	m_task_waiter.notify_one();
 
 }
