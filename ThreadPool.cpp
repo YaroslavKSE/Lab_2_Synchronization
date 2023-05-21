@@ -9,7 +9,7 @@ void ThreadPool::initialize(const size_t worker_count)
 	m_workers.reserve(worker_count); 
 
 	// Create worker threads for the first queue
-	for (size_t id = 0; id < worker_count; id++) {
+	for (size_t id = 0; id < worker_count / 2; id++) {
 		m_workers.emplace_back(&ThreadPool::routine, this);
 	}
 
@@ -68,12 +68,17 @@ void ThreadPool::routine()
 		if (m_terminated && !task_acquired) {
 			return;
 		}
-		
+		std::cout << "----------------------------------" << "\n";
+		std::cout << "First Queue size:" << firstQueue.size() << "\n";
+		//std::cout << firstQueue.GetTotalTime() << "\n";
+		std::cout << "Second Queue size:" << secondQueue.size() << "\n";
+		//std::cout << secondQueue.GetTotalTime() << "\n";
+		std::cout << "----------------------------------" << "\n";
 		std::cout << "Thread ID: " << std::this_thread::get_id() << "\n";
 		std::cout << "Performing the task [id=" << task.id << " time=" << task.taskTime << "]" << "\n";
 		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long>(task.taskTime * 1000)));
-		std::cout << "The task is done, waiting for next" << "\n";
 		m_task_waiter.notify_one();
+		std::cout << "The task is done, waiting for next" << "\n";
 	}
 
 }
