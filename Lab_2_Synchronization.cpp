@@ -18,9 +18,11 @@ int main() {
 
     TaskGenerator taskGenerator;
 
-    const size_t numTasks = 20;  // Adjust the number of tasks as needed
+    const size_t numTasks = 30;  // Adjust the number of tasks as needed
     for (size_t i = 0; i < numTasks; i++) {
+
         Task task = taskGenerator.GenerateTask();
+        std::this_thread::sleep_for(std::chrono::seconds(1));  // Delay before adding the task
         threadPool.add_task(task);
     }
 

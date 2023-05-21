@@ -57,7 +57,7 @@ void ThreadPool::routine()
 		{
 			write_lock _(m_rw_lock);
 			auto wait_condition = [this, &task_acquired, &task] {
-				task_acquired = firstQueue.pop(task);
+				task_acquired = firstQueue.pop(task);	
 				if (!task_acquired) {
 					task_acquired = secondQueue.pop(task);
 				}
@@ -68,6 +68,8 @@ void ThreadPool::routine()
 		if (m_terminated && !task_acquired) {
 			return;
 		}
+		
+		std::cout << "Thread ID: " << std::this_thread::get_id() << "\n";
 		std::cout << "Performing the task [id=" << task.id << " time=" << task.taskTime << "]" << "\n";
 		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long>(task.taskTime * 1000)));
 		std::cout << "The task is done, waiting for next" << "\n";
